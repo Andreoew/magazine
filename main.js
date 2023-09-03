@@ -1,13 +1,14 @@
-import { renderizarCatalogo } from './src/cartaoProduto';
-import { inicializarCarrinho, atualizarPrecoCarrinho, renderizarProdutosCarrinho } from './src/menuCarrinho'
-import { inicializarFiltros } from './src/filtrosCatalogo'
+import { renderizarCatalogo } from "./src/cartaoProduto";
+import {
+  inicializarCarrinho,
+  atualizarPrecoCarrinho,
+  renderizarProdutosCarrinho,
+  atualizarPrecoTotalCard,
+} from "./src/menuCarrinho";
+import { inicializarFiltros } from "./src/filtrosCatalogo";
 
-
-
-
-renderizarCatalogo()
+renderizarCatalogo();
 inicializarCarrinho();
 renderizarProdutosCarrinho();
 atualizarPrecoCarrinho();
 inicializarFiltros();
-

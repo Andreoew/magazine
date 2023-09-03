@@ -1,4 +1,5 @@
 import { catalogo } from "./lista-catalogo-produtos";
+import { idsProdutosCarrinhoComQuantidade } from "./menuCarrinho";
 
 export function salvarLocalStorage(chave, informacao) {
   localStorage.setItem(chave, JSON.stringify(informacao));
@@ -50,9 +51,21 @@ export function desenharProdutoCarrinhoSimples(
         style: "currency",
         currency: "BRL",
       }).format(produto.preco)}</p>
+      <p id='preco-total-${
+        produto.id
+      }' class="text-green-800 text-lg font-bold">${new Intl.NumberFormat(
+    "br-BR",
+    {
+      style: "currency",
+      currency: "BRL",
+    }
+  ).format(produto.preco * idsProdutosCarrinhoComQuantidade[produto.id])}</p> 
     </div>
     <div class='flex text-slate-950 items-end absolute bottom-0 right-2 text-lg'>
-        <p id='quantidade-${produto.id}' class='ml-2'>${quantidadeProduto}</p>
+        <label class='text-sm text-slate-400'>Qnt:</label>
+        <p id='quantidade-${
+          produto.id
+        }' class='ml-2 bg-slate-300 rounded-full w-7 items-center flex justify-center h-7'>${quantidadeProduto}</p>
     </div>`;
 
   elementoArticle.innerHTML = cartaoProdutoCarrinho;

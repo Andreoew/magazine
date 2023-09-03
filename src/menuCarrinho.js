@@ -42,18 +42,21 @@ function incrementarQuantidadeProduto(idProduto) {
   idsProdutosCarrinhoComQuantidade[idProduto]++;
   salvarLocalStorage("carrinho", idsProdutosCarrinhoComQuantidade);
   atualizarPrecoCarrinho();
+  atualizarPrecoTotalCard(idProduto);
   atualizarInformacaoQuantidade(idProduto);
 }
 
 function decrementarQuantidadeProduto(idProduto) {
   if (idsProdutosCarrinhoComQuantidade[idProduto] === 1) {
     salvarLocalStorage("carrinho", idsProdutosCarrinhoComQuantidade);
+    atualizarPrecoTotalCard(idProduto);
     removerDoCarrinho(idProduto);
     return;
   }
   console.log(idsProdutosCarrinhoComQuantidade);
   idsProdutosCarrinhoComQuantidade[idProduto]--;
   atualizarPrecoCarrinho();
+  atualizarPrecoTotalCard(idProduto);
   atualizarInformacaoQuantidade(idProduto);
 }
 
@@ -80,32 +83,48 @@ function desenhaProdutoNoCarrinho(idProduto) {
     elementoArticle.classList.add(articleClass);
   }
 
+  const precoTotalElement = document.createElement("span");
+  precoTotalElement.id = `preco-total-${produto.id}`;
+  precoTotalElement.className = "text-green-700 text-lg";
+
   const cartaoProdutoCarrinho = `  
-    <button class="absolute top-0 right-2" id='remover-item-${produto.id}'>
-      <i class="fa-solid fa-circle-xmark text-slate-500 hover:text-red-500"></i>
-    </button>
-    <img src="./assets/img/${produto.imagem}" alt="Carrinho: ${
+  <button class="absolute top-0 right-2" id='remover-item-${produto.id}'>
+    <i class="fa-solid fa-circle-xmark text-slate-500 hover:text-red-500"></i>
+  </button>
+  <img src="./assets/img/${produto.imagem}" alt="Carrinho: ${
     produto.nome
   }" class="h-24 rounded-lg">
-    <div class="p-2 flex flex-col justify-between">
-      <p class="text-slate-900 text-sm">${produto.nome}</p>
-      <p class="text-slate-400 text-xs">Tamanho: M</p>
-      <p class="text-green-700 text-lg">${new Intl.NumberFormat("br-BR", {
-        style: "currency",
-        currency: "BRL",
-      }).format(produto.preco)}</p>
-    </div>
-    <div class='flex text-slate-950 items-end absolute bottom-0 right-2 text-lg'>
-      <button id='decrementar-produto-${
-        produto.id
-      }' class=' hover:text-red-500'>-</button>
-        <p id='quantidade-${produto.id}' class='ml-2'>${
+  <div class="p-2 flex flex-col justify-between">
+    <p class="text-slate-900 text-sm">${produto.nome}</p>
+    <p class="text-slate-400 text-xs">Tamanho: M</p>
+    <p class="text-green-700 text-lg">${new Intl.NumberFormat("br-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(produto.preco)}</p>  
+    <p id='preco-total-${
+      produto.id
+    }' class="text-green-800 text-lg font-bold">${new Intl.NumberFormat(
+    "br-BR",
+    {
+      style: "currency",
+      currency: "BRL",
+    }
+  ).format(produto.preco * idsProdutosCarrinhoComQuantidade[produto.id])}</p> 
+  </div>
+  
+  <div class='flex text-slate-950 items-end absolute bottom-0 right-2 text-lg'>
+    <button id='decrementar-produto-${
+      produto.id
+    }' class=' hover:text-red-500'>-</button>
+      <p id='quantidade-${produto.id}' class='ml-2'>${
     idsProdutosCarrinhoComQuantidade[produto.id]
   }</p>
-      <button id='incrementar-produto-${produto.id}' class='ml-2'>+</button>
-    </div>  
-  `;
+    <button id='incrementar-produto-${produto.id}' class='ml-2'>+</button>
+  </div>  
+`;
+
   elementoArticle.innerHTML = cartaoProdutoCarrinho;
+  elementoArticle.appendChild(precoTotalElement);
   containerProdutosCarrinho.appendChild(elementoArticle);
 
   document
@@ -119,6 +138,19 @@ function desenhaProdutoNoCarrinho(idProduto) {
   document
     .getElementById(`remover-item-${produto.id}`)
     .addEventListener("click", () => removerDoCarrinho(produto.id));
+}
+
+export function atualizarPrecoTotalCard(idProduto) {
+  const precoCard = document.getElementById(`preco-total-${idProduto}`);
+  const produto = catalogo.find((p) => p.id === idProduto);
+
+  const precoTotalCard =
+    produto.preco * idsProdutosCarrinhoComQuantidade[idProduto];
+
+  precoCard.innerText = new Intl.NumberFormat("br-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(precoTotalCard);
 }
 
 export function renderizarProdutosCarrinho() {
